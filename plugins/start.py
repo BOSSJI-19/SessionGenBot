@@ -21,8 +21,8 @@ async def start_msg(bot, message: Message):
 
     buttons = InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("PYROGRAM", callback_data="gen_pyro"),
-            InlineKeyboardButton("TELETHON", callback_data="gen_tele")
+            InlineKeyboardButton("ᴘʏʀᴏɢʀᴀᴍ", callback_data="gen_pyro"),
+            InlineKeyboardButton("ᴛᴇʟᴇᴛʜᴏɴ", callback_data="gen_tele")
         ]
     ])
 
