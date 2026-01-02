@@ -5,6 +5,8 @@ API_ID = int(os.environ.get("API_ID", "123456"))
 API_HASH = os.environ.get("API_HASH", "your_hash_here")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "your_bot_token")
 
+OWNER_ID = 6356015122
+SUPPORT_CHAT = "https://t.me/SPSUPPORTT1"
 # Log Group ID (Integer hona chahiye, -100 se start hota hai usually)
 LOG_GROUP_ID = int(os.environ.get("LOG_GROUP_ID", "-100123456789"))
 
